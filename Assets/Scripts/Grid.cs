@@ -9,10 +9,14 @@ public class Grid : MonoBehaviour
     public float NodeRadius;
     public List<Node> path;
 
+    public bool displayGridGizmos;
+
     Node[,] grid;
 
     float nodeDiameter;
     int gridSizeX, gridSizeY;
+
+    public int MaxSize { get => this.gridSizeX * this.gridSizeY; }
 
     private void Start()
     {
@@ -33,7 +37,7 @@ public class Grid : MonoBehaviour
             for (int y = 0; y < this.gridSizeY; y++)
             {
                 var worldPoint = bottomLeft + (Vector3.right * (x * this.nodeDiameter + this.NodeRadius)) + (Vector3.forward * (y * this.nodeDiameter + this.NodeRadius));
-                var walkable = !Physics.CheckSphere(worldPoint, 1f, this.UnwalkableLayers);
+                var walkable = !Physics.CheckSphere(worldPoint, 0.5f, this.UnwalkableLayers);
 
                 this.grid[x, y] = new Node(walkable, worldPoint, x, y);
             }
@@ -84,11 +88,16 @@ public class Grid : MonoBehaviour
 
         foreach (var node in grid)
         {
-            Gizmos.color = node.Walkable ? Color.white : Color.red;
             if (path != null && path.Contains(node))
+            {
                 Gizmos.color = Color.black;
-
-            Gizmos.DrawCube(node.WorldPosition, Vector3.one * (this.nodeDiameter - 0.1f));
+                Gizmos.DrawCube(node.WorldPosition, Vector3.one * (this.nodeDiameter - 0.1f));
+            }
+            else if (this.displayGridGizmos)
+            {
+                Gizmos.color = node.Walkable ? Color.white : Color.red;
+                Gizmos.DrawCube(node.WorldPosition, Vector3.one * (this.nodeDiameter - 0.1f));
+            }
         }
     }
 }

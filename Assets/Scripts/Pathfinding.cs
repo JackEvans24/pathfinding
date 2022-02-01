@@ -1,5 +1,5 @@
-using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
 
 [RequireComponent(typeof(Grid))]
@@ -17,32 +17,32 @@ public class Pathfinding : MonoBehaviour
 
     private void Update()
     {
-        this.FindPath(this.seeker.position, this.target.position);
+        if (Input.GetButtonDown("Jump"))
+            this.FindPath(this.seeker.position, this.target.position);
     }
 
     private void FindPath(Vector3 startPosition, Vector3 targetPosition)
     {
+        var stopwatch = new Stopwatch();
+        stopwatch.Start();
+
         var startNode = this.grid.NodeFromWorldPoint(startPosition);
         var targetNode = this.grid.NodeFromWorldPoint(targetPosition);
 
-        var openSet = new List<Node>();
+        var openSet = new Heap<Node>(this.grid.MaxSize);
         openSet.Add(startNode);
         var closedSet = new HashSet<Node>();
 
         while (openSet.Count > 0)
         {
-            var currentNode = openSet[0];
-            for (int i = 1; i < openSet.Count; i++)
-            {
-                if (openSet[i].fCost < currentNode.fCost || (openSet[i].fCost == currentNode.fCost && openSet[i].hCost < currentNode.hCost))
-                    currentNode = openSet[i];
-            }
-
-            openSet.Remove(currentNode);
+            var currentNode = openSet.Pop();
             closedSet.Add(currentNode);
 
             if (currentNode == targetNode)
             {
+                stopwatch.Stop();
+                UnityEngine.Debug.Log($"Path found in {stopwatch.ElapsedMilliseconds}ms");
+
                 this.RetracePath(startNode, targetNode);
                 return;
             }
@@ -61,6 +61,8 @@ public class Pathfinding : MonoBehaviour
 
                     if (!openSet.Contains(neighbour))
                         openSet.Add(neighbour);
+                    else
+                        openSet.UpdateItem(neighbour);
                 }
             }
         }
