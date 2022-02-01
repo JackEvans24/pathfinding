@@ -4,11 +4,12 @@ using UnityEngine;
 
 public class Grid : MonoBehaviour
 {
+    [Header("Grid Attributes")]
     public LayerMask UnwalkableLayers;
     public Vector2 GridWorldSize;
     public float NodeRadius;
-    public List<Node> path;
 
+    [Header("Gizmos")]
     public bool displayGridGizmos;
 
     Node[,] grid;
@@ -18,7 +19,7 @@ public class Grid : MonoBehaviour
 
     public int MaxSize { get => this.gridSizeX * this.gridSizeY; }
 
-    private void Start()
+    private void Awake()
     {
         this.nodeDiameter = this.NodeRadius * 2;
         this.gridSizeX = Mathf.RoundToInt(this.GridWorldSize.x / this.nodeDiameter);
@@ -83,21 +84,13 @@ public class Grid : MonoBehaviour
     {
         Gizmos.DrawWireCube(transform.position, new Vector3(this.GridWorldSize.x, 1f, this.GridWorldSize.y));
 
-        if (grid == null)
+        if (grid == null || !this.displayGridGizmos)
             return;
 
         foreach (var node in grid)
         {
-            if (path != null && path.Contains(node))
-            {
-                Gizmos.color = Color.black;
-                Gizmos.DrawCube(node.WorldPosition, Vector3.one * (this.nodeDiameter - 0.1f));
-            }
-            else if (this.displayGridGizmos)
-            {
-                Gizmos.color = node.Walkable ? Color.white : Color.red;
-                Gizmos.DrawCube(node.WorldPosition, Vector3.one * (this.nodeDiameter - 0.1f));
-            }
+            Gizmos.color = node.Walkable ? Color.white : Color.red;
+            Gizmos.DrawCube(node.WorldPosition, Vector3.one * (this.nodeDiameter - 0.1f));
         }
     }
 }
