@@ -1,13 +1,13 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 
 public class Heap<T> where T : IHeapItem<T>
 {
     T[] items;
     int currentItemCount;
 
+    /// <summary>
+    /// Current count of items in the collection
+    /// </summary>
     public int Count { get => this.currentItemCount; }
 
     public Heap(int maxHeapSize)
@@ -15,6 +15,9 @@ public class Heap<T> where T : IHeapItem<T>
         this.items = new T[maxHeapSize];
     }
 
+    /// <summary>
+    /// Add an item to the collection
+    /// </summary>
     public void Add(T item)
     {
         item.HeapIndex = currentItemCount;
@@ -24,6 +27,10 @@ public class Heap<T> where T : IHeapItem<T>
         this.currentItemCount++;
     }
 
+    /// <summary>
+    /// Remove the first item in the collection and reorganise remaining items
+    /// </summary>
+    /// <returns>The first item in the collection</returns>
     public T Pop()
     {
         var firstItem = items[0];
@@ -37,16 +44,28 @@ public class Heap<T> where T : IHeapItem<T>
         return firstItem;
     }
 
+    /// <summary>
+    /// Resort items after an item is updated
+    /// </summary>
+    /// <param name="item">The item which has changed</param>
     public void UpdateItem(T item)
     {
         this.SortUp(item);
     }
 
+    /// <summary>
+    /// Returns true if an item is contained in this collection
+    /// </summary>
+    /// <param name="item">The item to verify</param>
     public bool Contains(T item)
     {
         return Equals(items[item.HeapIndex], item);
     }
 
+    /// <summary>
+    /// Sort heap items by traversing up the tree from
+    /// </summary>
+    /// <param name="item">The item to sort</param>
     private void SortUp(T item)
     {
         int parentIndex = (item.HeapIndex - 1) / 2;
@@ -64,36 +83,45 @@ public class Heap<T> where T : IHeapItem<T>
         }
     }
 
+    /// <summary>
+    /// Sort heap items by traversing down the tree
+    /// </summary>
+    /// <param name="item">The item to sort</param>
     private void SortDown(T item)
     {
         while (true)
         {
             int leftChildIndex = (item.HeapIndex * 2) + 1;
             int rightChildIndex = (item.HeapIndex * 2) + 2;
-            int swapIndex = 0;
 
+            // If left child index is within the bounds of the heap
             if (leftChildIndex < currentItemCount)
             {
-                swapIndex = leftChildIndex;
+                // Set the check index to left
+                int swapIndex = leftChildIndex;
+                // If right child index is within the bounds of the heap, and the value of the right child is less than the value of the left child
+                // Set the check index to right
+                if (rightChildIndex < currentItemCount && items[leftChildIndex].CompareTo(items[rightChildIndex]) < 0)
+                    swapIndex = rightChildIndex;
 
-                if (rightChildIndex < currentItemCount)
-                {
-                    if (items[leftChildIndex].CompareTo(items[rightChildIndex]) < 0)
-                        swapIndex = rightChildIndex;
-                }
-
+                // If the value of the child is less than the value of the current item, swap the items
                 if (item.CompareTo(items[swapIndex]) < 0)
                     this.Swap(item, items[swapIndex]);
+                // Otherwise item is in right place, return
                 else
                     return;
             }
+            // Otherwise we are at the bottom of the tree, return
             else
-            {
                 return;
-            }
         }
     }
 
+    /// <summary>
+    /// Swap two items and set their new HeapIndex values
+    /// </summary>
+    /// <param name="itemA">Item 1 to swap</param>
+    /// <param name="itemB">Item 2 to swap</param>
     private void Swap(T itemA, T itemB)
     {
         items[itemA.HeapIndex] = itemB;
