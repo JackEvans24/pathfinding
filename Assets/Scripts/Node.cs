@@ -6,6 +6,7 @@ public class Node : IHeapItem<Node>
     public Vector3 WorldPosition;
     public int GridX;
     public int GridY;
+    public int MovementPenalty;
 
     public int gCost;
     public int hCost;
@@ -16,12 +17,13 @@ public class Node : IHeapItem<Node>
 
     public Node Parent;
 
-    public Node(bool walkable, Vector3 worldPosition, int gridX, int gridY)
+    public Node(bool walkable, Vector3 worldPosition, int gridX, int gridY, int movementPenalty)
     {
         this.Walkable = walkable;
         this.WorldPosition = worldPosition;
         this.GridX = gridX;
         this.GridY = gridY;
+        this.MovementPenalty = movementPenalty;
     }
 
     public int CompareTo(Node other)
