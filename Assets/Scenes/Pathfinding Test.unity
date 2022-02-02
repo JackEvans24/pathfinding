@@ -1448,9 +1448,9 @@ MonoBehaviour:
   unwalkableLayers:
     serializedVersion: 2
     m_Bits: 64
-  GridWorldSize: {x: 100, y: 100}
-  NodeRadius: 0.5
-  WalkableRegions:
+  gridWorldSize: {x: 100, y: 100}
+  nodeRadius: 0.5
+  walkableRegions:
   - TerrainMask:
       serializedVersion: 2
       m_Bits: 128
@@ -1458,7 +1458,7 @@ MonoBehaviour:
   - TerrainMask:
       serializedVersion: 2
       m_Bits: 256
-    TerrainPenalty: 10
+    TerrainPenalty: 8
   obstacleProximityPenalty: 10
   RayHeight: 50
   RayDistance: 100
