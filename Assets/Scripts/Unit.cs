@@ -1,11 +1,10 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Unit : MonoBehaviour
 {
-    public Transform target;
-    public float speed = 5f;
+    [SerializeField] private Transform target;
+    [SerializeField] private float speed = 5f;
 
     Vector3[] path;
     int targetIndex;
@@ -15,6 +14,11 @@ public class Unit : MonoBehaviour
         PathManager.RequestPath(this.transform.position, this.target.position, this.OnPathFound);
     }
 
+    /// <summary>
+    /// Callback for <see cref="PathManager.RequestPath"/>
+    /// </summary>
+    /// <param name="waypoints">World space coordinates along the returned path</param>
+    /// <param name="success">Whether path resolution was successful</param>
     private void OnPathFound(Vector3[] waypoints, bool success)
     {
         if (!success)
@@ -26,6 +30,9 @@ public class Unit : MonoBehaviour
         StartCoroutine("FollowPath");
     }
 
+    /// <summary>
+    /// Coroutine which moves this object's <see cref="Transform"/> towards the next waypoint in the path
+    /// </summary>
     private IEnumerator FollowPath()
     {
         if (path == null || path.Length == 0)
@@ -40,7 +47,10 @@ public class Unit : MonoBehaviour
             {
                 this.targetIndex++;
                 if (this.targetIndex >= this.path.Length)
+                {
+                    this.path = null;
                     yield break;
+                }
 
                 currentWaypoint = this.path[this.targetIndex];
             }
