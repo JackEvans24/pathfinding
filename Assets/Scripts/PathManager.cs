@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -24,6 +23,12 @@ public class PathManager : MonoBehaviour
         this.pathfinding = GetComponent<Pathfinding>();
     }
 
+    /// <summary>
+    /// Enqueues the path request, and tries to start the next path
+    /// </summary>
+    /// <param name="pathStart">World space position of the start of the path</param>
+    /// <param name="pathEnd">World space position of the end of the path</param>
+    /// <param name="callback">The function to be executed when the path is found</param>
     public static void RequestPath(Vector3 pathStart, Vector3 pathEnd, Action<Vector3[], bool> callback)
     {
         var newRequest = new PathRequest(pathStart, pathEnd, callback);
@@ -31,6 +36,9 @@ public class PathManager : MonoBehaviour
         instance.TryProcessNext();
     }
 
+    /// <summary>
+    /// If not currently processing a path, dequeue the next path and start processing
+    /// </summary>
     private void TryProcessNext()
     {
         if (this.isProcessingPath || this.requestQueue.Count <= 0)
@@ -41,24 +49,15 @@ public class PathManager : MonoBehaviour
         this.pathfinding.StartFindPath(this.currentRequest.PathStart, this.currentRequest.PathEnd);
     }
 
+    /// <summary>
+    /// Call when the current path has finished being processed
+    /// </summary>
+    /// <param name="path">The waypoints of the path</param>
+    /// <param name="success">Whether finding the path was successful</param>
     public void FinishedProcessingPath(Vector3[] path, bool success)
     {
         this.currentRequest.Callback(path, success);
         this.isProcessingPath = false;
         this.TryProcessNext();
     }
-
-    struct PathRequest
-    {
-        public Vector3 PathStart;
-        public Vector3 PathEnd;
-        public Action<Vector3[], bool> Callback;
-
-        public PathRequest(Vector3 pathStart, Vector3 pathEnd, Action<Vector3[], bool> callback)
-        {
-            this.PathStart = pathStart;
-            this.PathEnd = pathEnd;
-            this.Callback = callback;
-        }
-    } 
 }
