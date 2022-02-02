@@ -1445,7 +1445,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2f3627206569c142b3766a5aa3b7961, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  UnwalkableLayers:
+  unwalkableLayers:
     serializedVersion: 2
     m_Bits: 64
   GridWorldSize: {x: 100, y: 100}
