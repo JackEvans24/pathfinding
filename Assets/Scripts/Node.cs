@@ -26,6 +26,7 @@ public class Node : IHeapItem<Node>
         this.MovementPenalty = movementPenalty;
     }
 
+    // IComparable implementation
     public int CompareTo(Node other)
     {
         var result = this.fCost.CompareTo(other.fCost);
