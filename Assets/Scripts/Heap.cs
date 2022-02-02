@@ -74,10 +74,12 @@ public class Heap<T> where T : IHeapItem<T>
         {
             var parentItem = items[parentIndex];
 
+            // If the value of the parent is greater than the current item, swap
             if (item.CompareTo(parentItem) > 0)
                 this.Swap(item, parentItem);
+            // Otherwise item is in the right position, return
             else
-                break;
+                return;
 
             parentIndex = (item.HeapIndex - 1) / 2;
         }
